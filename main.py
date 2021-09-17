@@ -46,7 +46,7 @@ def helper(data, args):
     useleakyrelu = args.useleakyrelu
     # define a model
     if args.use_gcn:
-        model = GCN(ndim, nlayers, len(set(data.y.tolist())), data.x, data.edge_index, data.edge_attr, droprate, useleakyrelu==1, alpha)
+        model = GCN(ndim, nlayers, len(set(data.y.tolist())), data.x, data.edge_index, data.edge_attr, droprate, alpha)
     else:
         if args.markov_agg:
             (edge_index, edge_weight) = markov_process_agg(data, eps, inflate, nlayers, normrow == 1, args.keepmax == 1, args.debug == 1)

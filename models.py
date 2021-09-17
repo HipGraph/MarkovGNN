@@ -53,7 +53,7 @@ class MarkovGCNR(torch.nn.Module):
         return xs
 
 class GCN(torch.nn.Module):
-    def __init__(self, ndim, nlayers, ntargets, features, edges, weights = None, droprate = 0.5, useleakyrelu = False, alpha = 0.5):
+    def __init__(self, ndim, nlayers, ntargets, features, edges, weights = None, droprate = 0.5, alpha = 0.5):
         super(GCN, self).__init__()
         self.convs = []
         self.ndim = ndim
@@ -63,7 +63,6 @@ class GCN(torch.nn.Module):
         self.ntargets = ntargets
         self.features = features
         self.droprate = droprate
-        self.useleakyrelu = useleakyrelu
         self.convs.append(GCNConv(self.features.shape[1], self.ndim, cached=True))
         for l in range(self.nlayers-2):
             self.convs.append(GCNConv(self.ndim, self.ndim, cached=True))
