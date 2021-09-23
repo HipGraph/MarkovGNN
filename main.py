@@ -23,7 +23,12 @@ import time
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
 from utils import readInput3f, readInput2f, loadPyGDataset
-from markov import markov_process_agg, markov_process_disj
+from markov import (
+markov_process_agg, 
+markov_process_disj, 
+markov_process_agg_sparse,
+markov_process_disj_sparse,
+)
 from models import MarkovGCNR, GCN
 from train import train
 
@@ -49,9 +54,17 @@ def helper(data, args):
         model = GCN(ndim, nlayers, len(set(data.y.tolist())), data.x, data.edge_index, data.edge_attr, droprate, alpha)
     else:
         if args.markov_agg:
-            (edge_index, edge_weight) = markov_process_agg(data, eps, inflate, nlayers, normrow == 1, args.keepmax == 1, args.debug == 1)
+            if args.markov_dense:
+                # use dense version to verify the results using the same random seed
+                (edge_index, edge_weight) = markov_process_agg(data, eps, inflate, nlayers, normrow == 1, args.keepmax == 1, args.debug == 1)
+            else:
+                (edge_index, edge_weight) = markov_process_agg_sparse(data, eps, inflate, nlayers, normrow == 1, args.debug == 1)
         else:
-            (edge_index, edge_weight) = markov_process_disj(data, eps, inflate, nlayers, normrow == 1, args.keepmax == 1, args.debug == 1)
+            if args.markov_dense:
+                # use dense version to verify the results using the same random seed
+                (edge_index, edge_weight) = markov_process_disj(data, eps, inflate, nlayers, normrow == 1, args.keepmax == 1, args.debug == 1)
+            else:
+                (edge_index, edge_weight) = markov_process_disj_sparse(data, eps, inflate, nlayers, normrow == 1, args.debug == 1)
         if False:
             print("layer-wise edge shape", edge_index)
         model = MarkovGCNR(ndim, nlayers, len(set(data.y.tolist())), data.x, edge_index, edge_weight, droprate, useleakyrelu==1, alpha)
@@ -71,6 +84,7 @@ if __name__ == "__main__":
     parser.add_argument('--dataset', default = 'Cora', required = False, type = str, help = 'PyG dataset name.')
     parser.add_argument('--use_gcn', action='store_true', help='Use vanilla GCN model.')
     parser.add_argument('--markov_agg', action='store_true', help='Use markov agg version.')
+    parser.add_argument('--markov_dense', action='store_true', help='Dense multiplication in markov process.')
     parser.add_argument('--eps', default = 0.25, required=False, type=float, help='Use threshold.')
     parser.add_argument('--normrow', default = 1, required = False, type = int, help='Normalization row/column.')
     parser.add_argument('--keepmax', default = 1, required=False, type=int, help='Take max entries based on eps.')
