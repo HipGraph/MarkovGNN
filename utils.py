@@ -6,6 +6,8 @@ from torch_geometric.datasets import Planetoid
 import torch_geometric.transforms as T
 from torch_geometric.data import Data
 import torch
+from networkx.algorithms import community
+import networkx as nx
 
 def readInput3f(inputf, labelf, featuref, oneIndexed = False, onelabeled = False, debug = True):
     # inputf: input file name with path
@@ -178,3 +180,35 @@ def loadPyGDataset(dataset_name = 'Cora'):
     dataset = Planetoid(path, dataset_name, num_train_per_class=30, transform=T.NormalizeFeatures())
     data = dataset[0]
     return data
+
+# compute homophily
+def computeHomophily(data, ei = None):
+    if ei is None:
+        edges = data.edge_index.t()
+    else:
+        edges = ei.t()
+    nominator = 0
+    for edge in edges:
+        nominator += data.y[edge[0]] == data.y[edge[1]]
+    return nominator / len(edges)
+
+# compute community mixing
+def mixingCommunityScore(data):
+    G = nx.Graph(data.edge_index.t().tolist())
+    comm = community.greedy_modularity_communities(G)
+    gd = dict()
+    for com in range(len(comm)):
+        for node in list(comm[com]):
+            gd[node] = com
+    count = 0
+    for edge in data.edge_index.t():
+        count += gd[edge[0].item()] == gd[edge[1].item()]
+    return count / len(data.edge_index.t())
+
+# compute new edges percentage
+def newEdges(data, edges):
+    count = 0
+    for edge in edges.t():
+        if edge not in data.edge_index.t():
+            count += 1
+    return 100.0 * count / len(edges.t())

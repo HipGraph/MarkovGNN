@@ -22,7 +22,7 @@ from sklearn.metrics.cluster import v_measure_score
 import time
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
-from utils import readInput3f, readInput2f, loadPyGDataset
+from utils import readInput3f, readInput2f, loadPyGDataset, computeHomophily, mixingCommunityScore
 from markov import (
 markov_process_agg, 
 markov_process_disj, 
@@ -115,4 +115,6 @@ if __name__ == "__main__":
     else:
         data = loadPyGDataset(dataset_name)
     print(data)
+    if args.debug == 1:
+        print("Homophily:", computeHomophily(data).item(), "Community Mixing:", mixingCommunityScore(data))
     helper(data, args)

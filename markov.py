@@ -7,6 +7,8 @@ import torch, random
 from torch_sparse import spspmm
 from torch_geometric.utils import add_remaining_self_loops, to_dense_adj, dense_to_sparse
 from torch_scatter import scatter_add
+from utils import computeHomophily, newEdges
+
 
 def markov_normalization(edge_index, edge_weight, num_nodes, ntype = 'col'):
     if ntype == 'col':
@@ -46,6 +48,9 @@ def markov_process_agg_sparse(data, eps, inflate, nlayers, row_normalization = T
         remaining_edge_idx = torch.nonzero(ew >= eps).flatten()
         ei = ei[:,remaining_edge_idx]
         ew = ew[remaining_edge_idx]
+        if ei.shape[1] < 1:
+            print("No more edges..! stopping after ", i, "layers")
+            break
         # normalization
         if row_normalization:
             ei, ew = markov_normalization(ei, ew, len(data.x), 'row')
@@ -55,7 +60,7 @@ def markov_process_agg_sparse(data, eps, inflate, nlayers, row_normalization = T
         medge_index.append(ei)
         medge_weight.append(ew)
         if debug:
-            print("layer ", i+1, "(after sparsification) edge_index size:", ei.shape)
+            print("layer ", i+1, "(after sparsification) edge_index size:", ei.shape, "homophily:", computeHomophily(data, ei))
     if nlayers > len(medge_index):
         print("Use less number of layers for the given", eps, " threshold, maximum:", len(medge_index), "layers")
         sys.exit(1)
@@ -151,6 +156,9 @@ def markov_process_disj_sparse(data, eps, inflate, nlayers, row_normalization = 
         remaining_edge_idx = torch.nonzero(ew >= eps).flatten()
         ei = ei[:,remaining_edge_idx]
         ew = ew[remaining_edge_idx]
+        if ei.shape[1] < 1:
+            print("No more edges..! stopping after ", i, "layers")
+            break
         # normalization
         if row_normalization:
             ei, ew = markov_normalization(ei, ew, len(data.x), 'row')
