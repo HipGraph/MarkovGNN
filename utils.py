@@ -202,7 +202,7 @@ def mixingCommunityScore(data):
             gd[node] = com
     count = 0
     for edge in data.edge_index.t():
-        count += gd[edge[0].item()] == gd[edge[1].item()]
+        count += gd[edge[0].item()] != gd[edge[1].item()]
     return count / len(data.edge_index.t())
 
 # compute new edges percentage
