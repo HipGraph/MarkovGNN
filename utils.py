@@ -196,6 +196,7 @@ def computeHomophily(data, ei = None):
 def mixingCommunityScore(data):
     G = nx.Graph(data.edge_index.t().tolist())
     comm = community.greedy_modularity_communities(G)
+    print("#communities detected:", len(comm))
     gd = dict()
     for com in range(len(comm)):
         for node in list(comm[com]):
