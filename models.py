@@ -57,22 +57,19 @@ class GCN(torch.nn.Module):
         super(GCN, self).__init__()
         self.convs = []
         self.ndim = ndim
-        self.nlayers = nlayers
+        self.nlayers = 2
         self.edges = edges
         self.weights = weights
         self.ntargets = ntargets
         self.features = features
         self.droprate = droprate
         self.convs.append(GCNConv(self.features.shape[1], self.ndim, cached=True, bias = addbias))
-        for l in range(self.nlayers-2):
-            self.convs.append(GCNConv(self.ndim, self.ndim, cached=True, bias = addbias))
         self.convs.append(GCNConv(self.ndim, self.ntargets, cached=True, bias = addbias))
 
     def forward(self):
         x = F.dropout(self.features, p=self.droprate, training=self.training)
         x = self.convs[0](x, self.edges, None)
-        for l in range(1, self.nlayers):
-            x = F.relu(x)
-            x = F.dropout(x, p=self.droprate)
-            x = self.convs[l](x, self.edges, self.weights)
+        x = F.relu(x)
+        x = F.dropout(x, p=self.droprate)
+        x = self.convs[1](x, self.edges, self.weights)
         return F.log_softmax(x, dim=1)

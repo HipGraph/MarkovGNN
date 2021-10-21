@@ -8,7 +8,7 @@ from torch_geometric.data import NeighborSampler
 import torch.nn.functional as F
 from torch_geometric.datasets import Planetoid
 import torch_geometric.transforms as T
-from torch_geometric.nn import GCNConv, ChebConv, MGCNConv   # noqa
+from torch_geometric.nn import GCNConv, ChebConv, MGCNConv 
 import networkx as nx
 from sklearn.cluster import KMeans
 import community as comm
@@ -51,6 +51,7 @@ def helper(data, args):
     useleakyrelu = args.useleakyrelu
     # define a model
     if args.use_gcn:
+        nlayers = 2
         model = GCN(ndim, nlayers, len(set(data.y.tolist())), data.x, data.edge_index, data.edge_attr, droprate, alpha)
     else:
         if args.markov_agg:
@@ -116,6 +117,6 @@ if __name__ == "__main__":
     else:
         data = loadPyGDataset(dataset_name)
     print(data)
-    if args.debug == 1:
+    if False:
         print("Homophily:", computeHomophily(data).item(), "Community Mixing:", mixingCommunityScore(data))
     helper(data, args)

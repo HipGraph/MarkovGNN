@@ -35,4 +35,4 @@ def train(model, data, optimizer, nepoch):
     vm = v_measure_score(data.y.tolist(), pred.tolist())
     print("Adjusted Rand Index:", ari)
     print("V-measure:", vm)
-    print("Confusion Matrix:", confusion_matrix(data.y.tolist(), pred.tolist()))
+    # print("Confusion Matrix:", confusion_matrix(data.y.tolist(), pred.tolist()))

@@ -178,7 +178,7 @@ def readInput2f(inputf, labelf, oneIndexed = False, onelabeled = False, debug = 
 
 def loadPyGDataset(dataset_name = 'Cora'):
     path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset_name)
-    if dataset_name.lower() in ('cora', 'citeseer', 'pubmed'):
+    if dataset_name.lower() in ('cora', 'citeseer'):
         dataset = Planetoid(path, dataset_name, num_train_per_class=30, transform=T.NormalizeFeatures())
     else:
         dataset = Amazon(path, dataset_name, transform=T.NormalizeFeatures())
@@ -204,7 +204,7 @@ def mixingCommunityScore(data, ei = None):
         edges = ei
     G = nx.Graph(edges.t().tolist())
     comm = community.greedy_modularity_communities(G)
-    print("#communities detected:", len(comm))
+    # print("#communities detected:", len(comm))
     gd = dict()
     for com in range(len(comm)):
         for node in list(comm[com]):
