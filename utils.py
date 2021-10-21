@@ -8,6 +8,7 @@ from torch_geometric.data import Data
 import torch
 from networkx.algorithms import community
 import networkx as nx
+from torch_geometric.datasets import Amazon
 
 def readInput3f(inputf, labelf, featuref, oneIndexed = False, onelabeled = False, debug = True):
     # inputf: input file name with path
@@ -177,7 +178,10 @@ def readInput2f(inputf, labelf, oneIndexed = False, onelabeled = False, debug = 
 
 def loadPyGDataset(dataset_name = 'Cora'):
     path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset_name)
-    dataset = Planetoid(path, dataset_name, num_train_per_class=30, transform=T.NormalizeFeatures())
+    if dataset_name.lower() in ('cora', 'citeseer', 'pubmed'):
+        dataset = Planetoid(path, dataset_name, num_train_per_class=30, transform=T.NormalizeFeatures())
+    else:
+        dataset = Amazon(path, dataset_name, transform=T.NormalizeFeatures())
     data = dataset[0]
     return data
 
@@ -193,8 +197,12 @@ def computeHomophily(data, ei = None):
     return nominator / len(edges)
 
 # compute community mixing
-def mixingCommunityScore(data):
-    G = nx.Graph(data.edge_index.t().tolist())
+def mixingCommunityScore(data, ei = None):
+    if ei is None:
+        edges = data.edge_index
+    else:
+        edges = ei
+    G = nx.Graph(edges.t().tolist())
     comm = community.greedy_modularity_communities(G)
     print("#communities detected:", len(comm))
     gd = dict()
@@ -202,9 +210,9 @@ def mixingCommunityScore(data):
         for node in list(comm[com]):
             gd[node] = com
     count = 0
-    for edge in data.edge_index.t():
+    for edge in edges.t():
         count += gd[edge[0].item()] != gd[edge[1].item()]
-    return count / len(data.edge_index.t())
+    return count / len(edges.t())
 
 # compute new edges percentage
 def newEdges(data, edges):

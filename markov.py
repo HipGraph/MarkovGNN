@@ -7,8 +7,9 @@ import torch, random
 from torch_sparse import spspmm
 from torch_geometric.utils import add_remaining_self_loops, to_dense_adj, dense_to_sparse
 from torch_scatter import scatter_add
-from utils import computeHomophily, newEdges
+from utils import computeHomophily, newEdges, mixingCommunityScore
 
+debug_on = False
 
 def markov_normalization(edge_index, edge_weight, num_nodes, ntype = 'col'):
     if ntype == 'col':
@@ -59,8 +60,9 @@ def markov_process_agg_sparse(data, eps, inflate, nlayers, row_normalization = T
         # store layer-wise edges
         medge_index.append(ei)
         medge_weight.append(ew)
-        if debug:
+        if debug_on:
             print("layer ", i+1, "(after sparsification) edge_index size:", ei.shape, "homophily:", computeHomophily(data, ei))
+            print("Community Mixing Param:", mixingCommunityScore(data, ei), "New Edges:", newEdges(data, ei))
     if nlayers > len(medge_index):
         print("Use less number of layers for the given", eps, " threshold, maximum:", len(medge_index), "layers")
         sys.exit(1)
@@ -85,7 +87,7 @@ def markov_process_agg(data, eps, inflate, nlayers, row_normalization = True, ke
         A = torch.mm(A, A)
         A = torch.pow(A, inflate)
         (ei, ew) = dense_to_sparse(A)
-        if debug:
+        if debug_on:
             print("layer ", i+1, " (after mul and pow) edge_index size:", ei.shape)
         # normalization
         if row_normalization:
@@ -119,7 +121,7 @@ def markov_process_agg(data, eps, inflate, nlayers, row_normalization = True, ke
         else:
             edge_index2, edge_weight2 = markov_normalization(ei, ew, A.shape[0], 'col')
         A = to_dense_adj(edge_index = edge_index2, batch = None, edge_attr = edge_weight2, max_num_nodes = int(data.x.shape[0]))[0]
-        if debug:
+        if debug_on:
             print("layer ", i+1, "(after sparsification) edge_index size:", edge_index2.shape)
         medge_index.append(edge_index2)
         medge_weight.append(edge_weight2)
@@ -167,7 +169,7 @@ def markov_process_disj_sparse(data, eps, inflate, nlayers, row_normalization = 
         # store layer-wise edges
         medge_index.append(ei)
         medge_weight.append(ew)
-        if debug:
+        if debug_on:
             print("layer ", i+1, "(after sparsification) edge_index size:", ei.shape)
         if ei[0].shape == prev_edge_index[0].shape:
             print("early stopping markov process due to converged number of edges.")
@@ -212,7 +214,7 @@ def markov_process_disj(data, eps, inflate, nlayers, row_normalization = True, k
         A = torch.mm(A, A)
         A = torch.pow(A, inflate)
         (ei, ew) = dense_to_sparse(A)
-        if debug:
+        if debug_on:
             print("layer ", i+1, " (after mul and pow) edge_index size:", ei.shape)
         # normalization
         if row_normalization:
@@ -246,7 +248,7 @@ def markov_process_disj(data, eps, inflate, nlayers, row_normalization = True, k
         else:
             edge_index2, edge_weight2 = markov_normalization(ei, ew, A.shape[0], 'col')
         A = to_dense_adj(edge_index = edge_index2, batch = None, edge_attr = edge_weight2, max_num_nodes = int(data.x.shape[0]))[0]
-        if debug:
+        if debug_on:
             print("layer ", i+1, "(after sparsification) edge_index size:", edge_index2.shape)
         medge_index.append(edge_index2)
         medge_weight.append(edge_weight2)

@@ -67,7 +67,7 @@ def helper(data, args):
                 (edge_index, edge_weight) = markov_process_disj_sparse(data, eps, inflate, nlayers, normrow == 1, args.debug == 1)
         if False:
             print("layer-wise edge shape", edge_index)
-        model = MarkovGCNR(ndim, nlayers, len(set(data.y.tolist())), data.x, edge_index, edge_weight, droprate, useleakyrelu==1, alpha)
+        model = MarkovGCNR(ndim, nlayers, len(set(data.y.tolist())), data.x, edge_index, edge_weight, droprate, useleakyrelu==1, alpha, args.addbias == 1)
     #define an optimizer
     optimizerdict = []
     for l in range(nlayers-1):
@@ -99,7 +99,8 @@ if __name__ == "__main__":
     parser.add_argument('--droprate', default = 0.5, required = False, type = float, help = 'Dropout  Rate')
     parser.add_argument('--epoch', default = 100, required=False, type=int, help='Number of epoch.')
     parser.add_argument('--debug', default = 1, required=False, type=int, help='Disable debug mode.')
-
+    parser.add_argument('--addbias', default = 1, required=False, type=int, help='Add bias.')
+    
     args = parser.parse_args()
     edgelistf = args.edgelist
     labelf = args.label
