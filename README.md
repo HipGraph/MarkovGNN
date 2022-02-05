@@ -56,7 +56,7 @@ If you find this repository helpful, please cite the following paper:
 ```
 @article{rahman2022markovgnn,
   title={{MarkovGNN: Graph} Neural Networks using Markov Diffusion},
-  author={Rahman, Md and Agrawal, Abhigya and Azad, Ariful},
+  author={Rahman, Md. Khaledur and Agrawal, Abhigya and Azad, Ariful},
   booktitle={arXiv:2022},
   year={2022}
 }
