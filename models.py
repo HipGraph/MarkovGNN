@@ -3,7 +3,7 @@ from torch_geometric.data import NeighborSampler
 import torch.nn.functional as F
 from torch_geometric.datasets import Planetoid
 import torch_geometric.transforms as T
-from torch_geometric.nn import GCNConv, ChebConv, MGCNConv 
+from torch_geometric.nn import GCNConv
 from sklearn.cluster import KMeans
 import networkx as nx
 import community as comm
