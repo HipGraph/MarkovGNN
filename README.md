@@ -55,7 +55,7 @@ There are several options to run the method which are outlined in the `main.py` 
 If you find this repository helpful, please cite the following paper:
 ```
 @article{rahman2022markovgnn,
-  title={{MarkovGNN: Graph} Neural Networks using Markov Diffusion},
+  title={{MarkovGNN: Graph} Neural Networks on Markov Diffusion},
   author={Rahman, Md. Khaledur and Agrawal, Abhigya and Azad, Ariful},
   booktitle={arXiv:2022},
   year={2022}
