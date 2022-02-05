@@ -1,5 +1,5 @@
 # MarkovGNN
-MarkovGNN: Graph Neural Networks using Markov Diffusion. This repository is only for WWW2022 submission.
+This is the official PyTorch-Geometric implementation of MarkovGNN paper under the title "MarkovGNN: Graph Neural Networks on Markov Diffusion". This method uses different markov graphs in different layers of the GNN.
 
 ## System requirements
 Users will need to install the following tools (CPU version).
@@ -15,8 +15,9 @@ scikit-learn: 0.23.2
 Matplotlib: 3.0.3
 ```
 
+
 ## How to run
-A list of sample commands to run the MarkovGCN models.
+To use `random seed` disable the seed-fixing portion in the `main.py` file. A list of sample commands to run the MarkovGCN models.
 ```
 python main.py --edgelist datasets/input2f/email.edgelist --label datasets/input2f/email.nodes.labels --eps 0.26 --epoch 200 --alpha 0.1 --nlayers 3 --lrate 0.01 --droprate 0.3 --markov_agg
 
@@ -38,6 +39,7 @@ python main.py --edgelist datasets/input3f/actor_edges.txt --label datasets/inpu
 
 python main.py --edgelist datasets/input3f/actor_edges.txt --label datasets/input3f/actor_labels.txt --feature datasets/input3f/actor_features.txt --epoch 200  --alpha 0.2 --markov_agg --nlayers 3 --eps 0.3
 ```
+To compare the results with respect to vanilla GCN, use the argument `--use_gcn` in the command line.
 
 ## Parameters
 There are several options to run the method which are outlined in the `main.py` file.
@@ -49,4 +51,16 @@ There are several options to run the method which are outlined in the `main.py` 
 
 ```
 
-Please create an issue if you face any problem to run this method. We hope to respond anonymously.
+## Citation
+If you find this repository helpful, please cite the following paper:
+```
+@article{rahman2022markovgnn,
+  title={{MarkovGNN: Graph} Neural Networks using Markov Diffusion},
+  author={Rahman, Md and Agrawal, Abhigya and Azad, Ariful},
+  booktitle={arXiv:2022},
+  year={2022}
+}
+```
+
+## Contact
+Please create an issue if you face any problem to run this method. Don't hesitate to contact the following person if you have any questions: Md. Khaledur Rahman (`morahma@iu.edu`).
