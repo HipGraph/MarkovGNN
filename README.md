@@ -1,6 +1,8 @@
 # MarkovGNN
 This is the official PyTorch-Geometric implementation of MarkovGNN paper under the title "MarkovGNN: Graph Neural Networks on Markov Diffusion". This method uses different markov graphs in different layers of the GNN.
 
+[**PDF is available in arXiv**](https://arxiv.org/abs/2202.02470)
+
 ## System requirements
 Users will need to install the following tools (CPU version).
 ```
@@ -57,7 +59,7 @@ If you find this repository helpful, please cite the following paper:
 @article{rahman2022markovgnn,
   title={{MarkovGNN: Graph} Neural Networks on Markov Diffusion},
   author={Rahman, Md. Khaledur and Agrawal, Abhigya and Azad, Ariful},
-  booktitle={arXiv:2022},
+  booktitle={arXiv preprint arXiv:2202.02470},
   year={2022}
 }
 ```
